@@ -8,6 +8,7 @@
 
 const express = require('express');
 const requestLogger = require('./middleware/logger');
+const errorHandler = require('./middleware/errorHandler');
 const scheduleRoutes = require('./routes/scheduleRoutes');
 
 const app = express();
@@ -51,12 +52,13 @@ app.get('/', (req, res) => {
 app.use('/schedule', scheduleRoutes);
 
 // ─── 404 Catch-All ────────────────────────────────────────────────
-app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Route ${req.method} ${req.originalUrl} does not exist`,
-    timestamp: new Date().toISOString(),
-  });
+app.use((req, res, next) => {
+  const error = new Error(`Route ${req.method} ${req.originalUrl} does not exist`);
+  error.status = 404;
+  next(error); // Pass to the global error handler
 });
+
+// ─── Global Error Handler ─────────────────────────────────────────
+app.use(errorHandler);
 
 module.exports = app;
