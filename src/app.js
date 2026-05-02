@@ -8,6 +8,7 @@
 
 const express = require('express');
 const requestLogger = require('./middleware/logger');
+const scheduleRoutes = require('./routes/scheduleRoutes');
 
 const app = express();
 
@@ -45,6 +46,9 @@ app.get('/', (req, res) => {
     },
   });
 });
+
+// ─── API Routes ───────────────────────────────────────────────────
+app.use('/schedule', scheduleRoutes);
 
 // ─── 404 Catch-All ────────────────────────────────────────────────
 app.use((req, res) => {
